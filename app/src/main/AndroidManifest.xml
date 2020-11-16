@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Newapp">
         <activity android:name=".AddNoteActivity" android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".MainActivity" android:launchMode="singleTop">
+        <activity android:name=".MainActivity" android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

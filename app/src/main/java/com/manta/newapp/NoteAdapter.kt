@@ -7,8 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.note_item.view.*
 import org.w3c.dom.Node
+import java.util.*
 
-class NoteAdapter(var mDataset : List<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NoteAdapter(var mDataset : LinkedList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
 
     class NoteViewHolder(view : View) : RecyclerView.ViewHolder(view){
@@ -24,11 +25,23 @@ class NoteAdapter(var mDataset : List<Note>) : RecyclerView.Adapter<NoteAdapter.
         return NoteViewHolder(view);
     }
 
+
     override fun getItemCount(): Int {
         return mDataset.size;
     }
 
-    fun setDataset(dataset  : List<Note>){
+    fun getNodeAt(pos : Int) : Note{
+        return mDataset.get(pos);
+    }
+
+    fun moveItem(from : Int, to : Int) {
+        val note = mDataset.get(from).copy();
+        mDataset.removeAt(from);
+        mDataset.add(to, note);
+        notifyItemMoved(from, to);
+
+    }
+    fun setDataset(dataset  : LinkedList<Note>){
         mDataset = dataset;
         notifyDataSetChanged();
     }
