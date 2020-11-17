@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mNoteViewModel.getAllNotes().observe(this, Observer<List<Note>> { t -> t?.let { noteAdapter.submitList(it); }; });
+        mNoteViewModel.getAllNotes().observe(this, Observer<List<Note>> { t -> t?.let { noteAdapter.setNotes(it); }; });
 
         button_add_note.setOnClickListener {
             Intent(this, AddNoteActivity::class.java).let {
