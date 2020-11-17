@@ -3,14 +3,29 @@ package com.manta.newapp.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListAdapter
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.manta.newapp.Note
 import com.manta.newapp.R
 import kotlinx.android.synthetic.main.note_item.view.*
 import java.util.*
 
-class NoteAdapter(var mDataset : LinkedList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NoteAdapter() : androidx.recyclerview.widget.ListAdapter<Note, NoteAdapter.NoteViewHolder>(diffUtilCallback){
+
+    companion object{
+        val diffUtilCallback : DiffUtil.ItemCallback<Note> = object :DiffUtil.ItemCallback<Note>(){
+            override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+                return oldItem.id == newItem.id;
+            }
+
+            override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+                return oldItem == newItem;
+            }
+
+        }
+    }
 
     interface OnItemClickListener{
         fun onItemClick(note : Note);
@@ -27,7 +42,7 @@ class NoteAdapter(var mDataset : LinkedList<Note>) : RecyclerView.Adapter<NoteAd
         init {
             view.setOnClickListener {
                 if(adapterPosition != RecyclerView.NO_POSITION)
-                    mOnClickListener?.onItemClick(mDataset[adapterPosition]);
+                    mOnClickListener?.onItemClick(getItem(adapterPosition));
             }
         }
     }
@@ -39,29 +54,22 @@ class NoteAdapter(var mDataset : LinkedList<Note>) : RecyclerView.Adapter<NoteAd
     }
 
 
-    override fun getItemCount(): Int {
-        return mDataset.size;
-    }
 
     fun setOnItemClickListener(listner : OnItemClickListener) {mOnClickListener = listner;}
 
     fun getNodeAt(pos : Int) : Note {
-        return mDataset.get(pos);
+        return getItem(pos);
     }
 
     fun moveItem(from : Int, to : Int) {
-        Collections.swap(mDataset, from, to);
+        Collections.swap(currentList, from, to);
         notifyItemMoved(from, to);
 
-    }
-    fun setDataset(dataset  : LinkedList<Note>){
-        mDataset = dataset;
-        notifyDataSetChanged();
     }
 
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        val note = mDataset[position]
+        val note = getItem(position);
         holder.mTitle.text = note.title;
         holder.mDescription.text = note.description;
         holder.mViewPrioirty.text = note.priority.toString();

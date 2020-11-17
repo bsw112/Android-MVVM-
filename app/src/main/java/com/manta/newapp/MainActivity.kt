@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
         }).get(NoteViewModel::class.java);
     }
 
-    private val mNotes = LinkedList<Note>();
     private val REQUEST_ADD_NOTE = 0;
     private val REQUEST_MODIFY_NOTE = 1;
 
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         rv_notes.layoutManager = LinearLayoutManager(this);
         rv_notes.setHasFixedSize(true);
 
-        val noteAdapter = NoteAdapter(mNotes);
+        val noteAdapter = NoteAdapter();
         rv_notes.adapter = noteAdapter;
         noteAdapter.setOnItemClickListener(object : NoteAdapter.OnItemClickListener {
             override fun onItemClick(note: Note) {
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mNoteViewModel.getAllNotes().observe(this, Observer<List<Note>> { t -> t?.let { noteAdapter.setDataset(LinkedList(it)); }; });
+        mNoteViewModel.getAllNotes().observe(this, Observer<List<Note>> { t -> t?.let { noteAdapter.submitList(it); }; });
 
         button_add_note.setOnClickListener {
             Intent(this, AddNoteActivity::class.java).let {
