@@ -16,6 +16,7 @@ class AddNoteActivity : AppCompatActivity() {
         const val EXTRA_TITLE = "com.manta.newapp.EXTRA_TITLE";
         const val EXTRA_DESCRIPTION = "com.manta.newapp.EXTRA_DESCRIPTION";
         const val EXTRA_PRIORITY = "com.manta.newapp.EXTRA_PRIORITY";
+        const val EXTRA_ID = "com.manta.newapp.EXTRA_ID"
 
     }
 
@@ -27,7 +28,17 @@ class AddNoteActivity : AppCompatActivity() {
         number_picker_priority.maxValue = 10;
 
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_close_24);
-        setTitle("Add Node");
+
+        intent.apply {
+            if (hasExtra(EXTRA_ID)) {
+                edit_text_title.setText(getStringExtra(EXTRA_TITLE));
+                edit_text_description.setText(getStringExtra(EXTRA_DESCRIPTION));
+                number_picker_priority.value = getIntExtra(EXTRA_PRIORITY, 0);
+                title = "Add Note";
+            } else {
+                title = "Update Note";
+            }
+        }
     }
 
     private fun saveNode() {
@@ -38,12 +49,15 @@ class AddNoteActivity : AppCompatActivity() {
             Toast.makeText(this, "Please insert a title and description", Toast.LENGTH_SHORT).show();
             return;
         }
+
         Intent().apply {
+            putExtra(EXTRA_ID, intent.getIntExtra(EXTRA_ID, -1));
             putExtra(EXTRA_TITLE, title);
             putExtra(EXTRA_DESCRIPTION, description);
             putExtra(EXTRA_PRIORITY, priority);
             setResult(RESULT_OK, this);
         }
+
         finish();
     }
 

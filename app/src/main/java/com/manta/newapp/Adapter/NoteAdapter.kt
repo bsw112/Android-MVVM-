@@ -1,26 +1,39 @@
-package com.manta.newapp
+package com.manta.newapp.Adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.manta.newapp.Note
+import com.manta.newapp.R
 import kotlinx.android.synthetic.main.note_item.view.*
-import org.w3c.dom.Node
 import java.util.*
 
 class NoteAdapter(var mDataset : LinkedList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
+    interface OnItemClickListener{
+        fun onItemClick(note : Note);
+    }
 
-    class NoteViewHolder(view : View) : RecyclerView.ViewHolder(view){
+    private var mOnClickListener : OnItemClickListener? = null;
+
+
+    inner class NoteViewHolder(view : View) : RecyclerView.ViewHolder(view){
         val mDescription: TextView = view.text_view_description;
         val mTitle: TextView = view.text_view_title;
         val mViewPrioirty : TextView = view.text_view_priority;
 
+        init {
+            view.setOnClickListener {
+                if(adapterPosition != RecyclerView.NO_POSITION)
+                    mOnClickListener?.onItemClick(mDataset[adapterPosition]);
+            }
+        }
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):NoteViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.note_item, parent, false);
         return NoteViewHolder(view);
     }
@@ -30,14 +43,14 @@ class NoteAdapter(var mDataset : LinkedList<Note>) : RecyclerView.Adapter<NoteAd
         return mDataset.size;
     }
 
-    fun getNodeAt(pos : Int) : Note{
+    fun setOnItemClickListener(listner : OnItemClickListener) {mOnClickListener = listner;}
+
+    fun getNodeAt(pos : Int) : Note {
         return mDataset.get(pos);
     }
 
     fun moveItem(from : Int, to : Int) {
-        val note = mDataset.get(from).copy();
-        mDataset.removeAt(from);
-        mDataset.add(to, note);
+        Collections.swap(mDataset, from, to);
         notifyItemMoved(from, to);
 
     }
