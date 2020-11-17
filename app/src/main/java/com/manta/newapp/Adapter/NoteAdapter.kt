@@ -62,8 +62,7 @@ class NoteAdapter() : androidx.recyclerview.widget.ListAdapter<Note, NoteAdapter
     }
 
     fun moveItem(from : Int, to : Int) {
-        Collections.swap(currentList, from, to);
-        notifyItemMoved(from, to);
+        //Collections.swap(currentList, from, to); // 터짐.. 이거 안되나봄
 
     }
 

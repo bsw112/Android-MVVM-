@@ -5,11 +5,15 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.room.Update
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
 
 //데이터베이스가 여러 종류가 있을때, 그것들을 묶어주는 역할(추상화)
 class NoteRepository(application : Application) {
     private lateinit var mNoteDao : NoteDao;
     private lateinit var mAllNotes : LiveData<List<Note>>;
+    //어플리케이션 종료시 자동으로 executor종료
+    private val executor  = Executors.newSingleThreadExecutor(ThreadFactory { r->  Thread(r).apply { isDaemon = true; } });
 
     init {
         val noteDatabase = NoteDatabase.getInstance(application);
@@ -18,24 +22,29 @@ class NoteRepository(application : Application) {
     }
 
     fun update(note : Note){
-        UpdateNoteAsyncTask(mNoteDao).execute(note);
+        executor.execute { mNoteDao.update(note);  }
+        //UpdateNoteAsyncTask(mNoteDao).execute(note);
     }
 
     fun insert(note : Note){
-        InsertNoteAsyncTask(mNoteDao).execute(note);
+        executor.execute{ mNoteDao.insert(note);}
+        //InsertNoteAsyncTask(mNoteDao).execute(note);
     }
 
 
     fun delete(note : Note){
-        DeleteNoteAsyncTask(mNoteDao).execute(note);
+        executor.execute{mNoteDao.delete(note);}
+        //DeleteNoteAsyncTask(mNoteDao).execute(note);
     }
 
 
     fun deleteAll(){
-        DeleteAlltNoteAsyncTask(mNoteDao).execute();
+        executor.execute{mNoteDao.deleteAll();}
+        //DeleteAlltNoteAsyncTask(mNoteDao).execute();
     }
 
     fun getAllNotes() : LiveData<List<Note>> = mAllNotes;
+
 
 
     class  UpdateNoteAsyncTask(private val noteDao : NoteDao) :  AsyncTask<Note, Void, Void>()
